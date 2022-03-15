@@ -1,21 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GerenciadorCursos.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
+using GerenciadorCursos.Repository;
+using GerenciadorCursos.Settings;
 
 namespace GerenciadorCursos
 {
@@ -31,6 +28,22 @@ namespace GerenciadorCursos
       // This method gets called by the runtime. Use this method to add services to the container.
       public void ConfigureServices(IServiceCollection services)
       {
+
+        var configuracoesSection = Configuration.GetSection("ConfiguracoesJWT");
+        var configuracoesJWT = configuracoesSection.Get<ConfiguracoesJWT>();
+
+        services.Configure<ConfiguracoesJWT>(configuracoesSection);
+
+        //Injeção de dependencia repository  
+        services.AddScoped<ICursosRepository, CursosRepository>();
+        services.AddScoped<ILoginRepository, LoginRepository>();
+
+        //Transforma os inteiros dos arquivos ENUM em String.
+        services.AddControllers().AddJsonOptions(x => 
+        {
+            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
         services.AddDbContext<ApplicationContext>(options => {
             options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
         });
@@ -43,7 +56,7 @@ namespace GerenciadorCursos
                 //Validando usuario ADM
                 opcoes.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("dfcwe4243243fedf21s")),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuracoesJWT.Segredo)),
                     ValidAudience = "https://localhost:5001",
                     ValidIssuer = "User",
                 };

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using GerenciadorCursos.Data;
 using GerenciadorCursos.Domain;
 using Microsoft.AspNetCore.Authorization;
 using GerenciadorCursos.ValueObjects;
+using GerenciadorCursos.Repository;
 
 namespace GerenciadorCursos.Controllers
 {
@@ -17,100 +14,63 @@ namespace GerenciadorCursos.Controllers
     [ApiController]
     public class CursosController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly ICursosRepository _repository;
 
-        public CursosController(ApplicationContext context)
+        public CursosController(ApplicationContext context, ICursosRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
-        // GET: api/Cursos
         [AllowAnonymous]
-        [HttpGet("ListaCursos")]
-        public async Task<ActionResult<IEnumerable<Curso>>> GetCursos()
+        [HttpGet("ListarCursos")]
+        public async Task<ActionResult<IEnumerable<Curso>>> ListarCurosos()
         {
-            return await _context.Cursos.ToListAsync();
+            var retorno = await _repository.ListarCurososAsync();
+
+            return Ok(retorno);
         }
 
         [AllowAnonymous]
         [HttpPost("CursosPorStatus")]
-        public async Task<ActionResult<IEnumerable<Curso>>> GetCursosPorStatus(StatusCurso status)
+        public async Task<ActionResult<IEnumerable<Curso>>> ListarCursosPorStatus(StatusCurso status)
         {
-            //Forma inicial. Passível de análise de perfomance! 
+            var cursos = await _repository.ListarCursosPorStatusAsync(status);
 
-            /* List<Curso> listaCursos = new List<Curso>();
-            await _context.Cursos.ForEachAsync(c =>{
-                if(c.Status == status)
-                    listaCursos.Add(c);  
-            }); */
-            
-            //Forma que eu achei mais performático.
-            return await _context.Cursos.AsNoTracking().Where(c => c.Status == status).ToListAsync();
+            return Ok(cursos);
         }
 
-        // Modificar Curso
         [Authorize]
         [HttpPut("AtualizarStatus")]
-        public async Task<IActionResult> PutStatusCurso(int id, StatusCurso status)
+        public async Task<ActionResult<object>> AtualizarStatusCurso(int id, StatusCurso status)
         {
-            
-            if (!CursoExists(id))
-            {
-                return BadRequest();
-            }
+            var retorno = await _repository.AtualizarStatusCursoAsync(id,status);
+            if(retorno == null)
+                return NoContent();
 
-            _context.Cursos.Find(id).Status = status;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CursoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(retorno);
         }
 
-        // POST: api/Cursos
         [Authorize(Roles = "Gerente")]
-        [HttpPost]
+        [HttpDelete("DeletarCurso")]
+        public async Task<ActionResult<object>> DeletarCurso(int id)
+        {
+            var resultado = await _repository.DeletarCursoAsync(id);
+            if(resultado == null)
+                return NoContent();
+
+            return Ok(resultado);
+        }
+
+        // CADASTRAR CURSO
+/*         [Authorize(Roles = "Gerente")]
+        [HttpPost("CadastrarCurso")]
         public async Task<ActionResult<Curso>> PostCurso(Curso curso)
         {
             _context.Cursos.Add(curso);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCurso", new { id = curso.Id }, curso);
-        }
+        } */
 
-        // DELETE: api/Cursos/5
-        [Authorize(Roles = "Gerente")]
-        [HttpDelete("DeletarCurso")]
-        public async Task<IActionResult> DeleteCurso(int id)
-        {
-            var curso = await _context.Cursos.FindAsync(id);
-            if (curso == null)
-            {
-                return NotFound();
-            }
-
-            _context.Cursos.Remove(curso);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CursoExists(int id)
-        {
-            return _context.Cursos.Any(e => e.Id == id);
-        }
     }
 }

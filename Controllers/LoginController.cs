@@ -1,46 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using GerenciadorCursos.Data;
 using GerenciadorCursos.Domain;
-using GerenciadorCursos.Services;
+using GerenciadorCursos.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+
 
 namespace GerenciadorCursos.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController : Controller
+    public class LoginController : ControllerBase
     {
+        private readonly ILoginRepository _repository;
+        
+        public LoginController(ILoginRepository repository)
+        {
+            _repository = repository;
+        }
+
         [HttpPost]
         [Route(("login"))]
-        public ActionResult<Usuario> Authenticate( int id)
-        {
-            var db = new ApplicationContext();
-            var usuario = db.Usuarios.Find(id);
-
-            if (usuario == null)
-                return NotFound(new { message = "Usuário não encontrado." });
-
-
-            CriarToken criarToken = new CriarToken();
-
-            var token = criarToken.GerarToken(usuario);
-
-            var retorno = new
-            {
-                Token = token,
-            };
-
+        public async Task<ActionResult<object>> AutenticarLogin( int id)
+        { 
+            var retorno = await _repository.AutenticarLoginAsync(id);
+            
             return Ok(retorno);
         }
 
-        [HttpDelete]
+/*         [HttpDelete]
         public async Task<IActionResult> DeletarTodos()
         {
             var db = new ApplicationContext();
@@ -50,10 +37,18 @@ namespace GerenciadorCursos.Controllers
                 await db.SaveChangesAsync();
             }
 
-            
-
             return Ok();
         }
+
+        [HttpPost("Cadastrar")]
+        public async Task<IActionResult> CadastrarUsuario(Usuario usuario)
+        {
+            var db = new ApplicationContext();
+            db.Add(usuario);
+            await db.SaveChangesAsync();
+            
+            return Ok();
+        } */
 
     }
 }
