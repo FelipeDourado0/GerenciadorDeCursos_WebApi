@@ -7,5 +7,6 @@ namespace GerenciadorCursos.Repository
     public interface ILoginRepository
     {
         public Task<object> AutenticarLoginAsync( int id);
+        Task<IActionResult> CadastrarUsuarioAsync(Usuario usuario);
     }
 }

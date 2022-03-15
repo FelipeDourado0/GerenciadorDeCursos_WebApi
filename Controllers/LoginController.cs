@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using GerenciadorCursos.Data;
 using GerenciadorCursos.Domain;
 using GerenciadorCursos.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -27,28 +26,14 @@ namespace GerenciadorCursos.Controllers
             return Ok(retorno);
         }
 
-/*         [HttpDelete]
-        public async Task<IActionResult> DeletarTodos()
+   
+        [HttpPost("CadastrarUsuario")]
+        public async Task<IActionResult> CadastrarUsuarioAsync(Usuario usuario)
         {
-            var db = new ApplicationContext();
-            for(int i = 1; i <= 6; i++){
-                var remover = await db.Usuarios.FindAsync(i);
-                db.Usuarios.Remove(remover);
-                await db.SaveChangesAsync();
-            }
-
-            return Ok();
-        }
-
-        [HttpPost("Cadastrar")]
-        public async Task<IActionResult> CadastrarUsuario(Usuario usuario)
-        {
-            var db = new ApplicationContext();
-            db.Add(usuario);
-            await db.SaveChangesAsync();
+            var retorno = await _repository.CadastrarUsuarioAsync(usuario);
             
             return Ok();
-        } */
+        }
 
     }
 }

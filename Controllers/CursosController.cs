@@ -45,7 +45,7 @@ namespace GerenciadorCursos.Controllers
         {
             var retorno = await _repository.AtualizarStatusCursoAsync(id,status);
             if(retorno == null)
-                return NoContent();
+                return BadRequest();
 
             return Ok(retorno);
         }
@@ -56,21 +56,20 @@ namespace GerenciadorCursos.Controllers
         {
             var resultado = await _repository.DeletarCursoAsync(id);
             if(resultado == null)
-                return NoContent();
+                return BadRequest();
 
             return Ok(resultado);
         }
 
         // CADASTRAR CURSO
-/*         [Authorize(Roles = "Gerente")]
+        [Authorize(Roles = "Gerente")]
         [HttpPost("CadastrarCurso")]
-        public async Task<ActionResult<Curso>> PostCurso(Curso curso)
+        public async Task<ActionResult<Curso>> CadastrarCursoAsync(Curso curso)
         {
-            _context.Cursos.Add(curso);
-            await _context.SaveChangesAsync();
+            var resposta = await _repository.CadastrarCursoAsync(curso);
 
-            return CreatedAtAction("GetCurso", new { id = curso.Id }, curso);
-        } */
+            return Ok();
+        }
 
     }
 }

@@ -18,5 +18,7 @@ namespace GerenciadorCursos.Repository
         Task<ActionResult<string>> AtualizarStatusCursoAsync(int id, StatusCurso status);
         //Apenas Gerente pode fazer.
         Task<ActionResult<string>> DeletarCursoAsync(int id);
+
+        Task<ActionResult> CadastrarCursoAsync(Curso curso);
     }
 }

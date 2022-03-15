@@ -72,9 +72,17 @@ namespace GerenciadorCursos.Repository
             return mensagemSucesso;
         }
 
+        public async Task<ActionResult> CadastrarCursoAsync(Curso curso)
+        {
+            _context.Cursos.Add(curso);
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
         private bool CursoExists(int id)
         {
             return _context.Cursos.Any(e => e.Id == id);
         }
+
     }
 }

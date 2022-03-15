@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GerenciadorCursos.Data;
 using GerenciadorCursos.Services;
 using GerenciadorCursos.Settings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace GerenciadorCursos.Repository
@@ -37,6 +38,14 @@ namespace GerenciadorCursos.Repository
             };
 
             return retorno;
+        }
+
+        public async Task<IActionResult> CadastrarUsuarioAsync(Domain.Usuario usuario)
+        {
+            _context.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            return null;
         }
     }
 }
