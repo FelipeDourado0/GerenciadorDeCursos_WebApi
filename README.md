@@ -5,7 +5,7 @@
 <p>Tendo dois perfis cadastraveis: "Gerente" e "Secretaria", sendo que cada um deles tem atribuições especificas dentro do sistema conforme as regras de negocio.</p>
 <p>Os cursos guardam dados especificos e que podem ser alterados e consultados pelos usuarios, de acordo com suas permissões</p>
 
-### Regras de Negócio 📜
+<h3>Regras de Negócio 📜</h3> 
 <p>• Qualquer pessoa pode Consultar todos os Cursos Cadastrados</p>
 <p>• Qualquer pessoa pode Consultar os Cursos por Status</p>
 <p>• O Gerente do sistema pode Excluir um Curso</p>
