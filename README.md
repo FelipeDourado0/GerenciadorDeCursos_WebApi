@@ -1,6 +1,5 @@
 # GerenciadorDeCursos_WebApi
-<p>Projeto desenvolvido com o conhecimento obtido no Bootcamp da Squadra!</p>
-### Resumo 📗
+<h3>Resumo📗</h3> 
 <p>Esse pejeto teve como objetivo criar uma WebApi para gerenciar cursos. </p>
 <p>Tendo dois perfis cadastraveis: "Gerente" e "Secretaria", sendo que cada um deles tem atribuições especificas dentro do sistema conforme as regras de negocio.</p>
 <p>Os cursos guardam dados especificos e que podem ser alterados e consultados pelos usuarios, de acordo com suas permissões</p>
