@@ -27,5 +27,3 @@
 • JWT  
 • Migrations
 • SQL Server
-
-<p></p>
